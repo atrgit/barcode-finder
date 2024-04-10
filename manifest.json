@@ -1,0 +1,11 @@
+{
+   "id": "barcode-finder",
+   "title": "Barcode Finder",
+   "subtitle": "Get item by barcode",
+   "author": "Alejandro Talavera",
+   "description": "App desarrollada en el IIB de la UNAM",
+   "icon": {
+      "type": "url",
+      "value": "/assets/logo_icon.png"
+   }
+}

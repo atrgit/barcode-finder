@@ -1,0 +1,418 @@
+<form>
+  <h2>Biblioteca Nacional Digital de M&eacute;xico</h2>
+  <p>Esta API es abierta y no requiere de autenticaci&oacute;n. Escriba el c&oacute;digo de barras a buscar.</p>
+  <section class="settings-section">
+    <mat-form-field>
+      <mat-label>C&oacute;digo de barras</mat-label>
+      <input matInput #identifier value="">
+    </mat-form-field>
+  </section>
+</form>
+<div class="cloudapp-actions">
+  <button mat-flat-button type="button" color="primary" (click)="search(identifier.value)">Buscar QR</button>
+</div>
+
+<div *ngIf="this.bib_data != null" >
+  <mat-tab-group color="primary" backgroundColor="accent">
+    <mat-tab label="Bibs">
+      <div *ngIf="this.bib_data != null" >
+        <h1>Datos bibliogr&aacute;ficos</h1>
+        <table>
+          <tr>
+            <td>T&iacute;tulo</td>
+            <td>{{this.bib_data.title}}</td>
+          </tr>
+          <tr>
+            <td>Autor</td>
+            <td>{{this.bib_data.author}}</td>
+          </tr>
+          <tr>
+            <td>MMS_ID</td>
+            <td>{{this.bib_data.mms_id}}</td>
+          </tr>
+          <tr>
+            <td>Suprimir para publicar</td>
+            <td>{{this.bib_data.bib_suppress_from_publishing == 'false'?'No':'Sí'}}</td>
+          </tr>
+          <tr>
+            <td>Edici&oacute;n completa</td>
+            <td>{{this.bib_data.complete_edition == '' ? '&nbsp;' : this.bib_data.complete_edition}}</td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de red</td>
+            <td>
+              <ul>
+              <li *ngFor="let nn of this.bib_data.network_number">
+              <strong>{{ nn }}</strong>
+              </li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>Lugar de la publicación</td>
+            <td>{{this.bib_data.place_of_publication}}</td>
+          </tr>
+          <tr>
+            <td>Fecha de la publicación</td>
+            <td>{{this.bib_data.date_of_publication}}</td>
+          </tr>
+          <tr>
+            <td>Publica</td>
+            <td>{{this.bib_data.publisher_const}}</td>
+          </tr>
+          <tr>
+            <td>Liga</td>
+            <td>{{this.bib_data.link}}</td>
+          </tr>
+        </table>
+        <br/>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Adquisiciones">
+      <div *ngIf="this.holding_data != null" >
+        <h1>Datos de adquisici&oacute;n</h1>
+        <table>
+          <tr>
+            <td>Holding ID</td>
+            <td>{{this.holding_data.holding_id}}</td>
+          </tr>
+          <tr>
+            <td>Adquisici&oacute;n retirada desde el publicante</td>
+            <td>{{this.holding_data.holding_suppress_from_publishing == 'false' ? 'No' : 'Sí'}}</td>
+          </tr>
+          <tr>
+            <td>Adquisici&oacute;n retirada calculada desde el publicante</td>
+            <td>{{this.holding_data.calculated_suppress_from_publishing == 'false' ? 'No' : 'Sí'}}</td>
+          </tr>
+          <tr>
+            <td>Tipo del n&uacute;mero parmanete de llamadas</td>
+            <td>
+              <ul>
+                <li>Valor: {{this.holding_data.permanent_call_number_type.value}}</li>
+                <li>Descipci&oacute;n: {{this.holding_data.permanent_call_number_type.desc}}</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero permanente de llamadas</td>
+            <td>
+              {{this.holding_data.permanent_call_number}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Tipo de n&uacute;mero de llamadas
+            </td>
+            <td>
+              <ul>
+                <li>Valor: {{this.holding_data.call_number_type.value}}</li>
+                <li>Descipci&oacute;n: {{this.holding_data.call_number_type.desc}}</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de llamada</td>
+            <td>
+              {{this.holding_data.call_number}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de acceso</td>
+            <td>
+              {{this.holding_data.accession_number}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>ID de la copia</td>
+            <td>
+              {{this.holding_data.copy_id}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>En ubicaci&oacute;n temporal</td>
+            <td>
+              {{this.holding_data.in_temp_location ? 'Sí' : 'No'}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Biblioteca temporal</td>
+            <td>
+              {{ jsonOject.stringify(this.holding_data.temp_library) }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Ubicaci&oacute;n temporal</td>
+            <td>
+              {{ jsonOject.stringify(this.holding_data.temp_location) }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Tipo de n&uacute;mero de llamada temporal</td>
+            <td>
+              {{ jsonOject.stringify(this.holding_data.temp_call_number_type) }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de llamada temporal</td>
+            <td>
+              {{ this.holding_data.temp_call_number }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Origen de n&uacute;mero de llamada temporal</td>
+            <td>
+              {{ this.holding_data.temp_call_number_source }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Pol&iacute;tica temporal</td>
+            <td>
+              {{ jsonOject.stringify(this.holding_data.temp_policy) }}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Liga</td>
+            <td>
+              {{ this.holding_data.link }}<br/>
+            </td>
+          </tr>
+        </table>
+        <br/>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Item">
+      <div *ngIf="this.item_data != null" >
+        <h1>Datos del item</h1>
+        <table>
+          <tr>
+            <td>PID</td>
+            <td>{{ this.item_data.pid }}</td>
+          </tr>
+          <tr>
+            <td>C&oacute;digo de barras</td>
+            <td><b>{{ this.item_data.barcode }}</b></td>
+          </tr>
+          <tr>
+            <td>Pol&iacute;tica</td>
+            <td>{{ jsonOject.stringify(this.item_data.policy) }}</td>
+          </tr>
+          <tr>
+            <td>Procedencia</td>
+            <td>{{ jsonOject.stringify(this.item_data.provenance) }}</td>
+          </tr>
+          <tr>
+            <td>Descripci&oacute;n</td>
+            <td>
+              {{this.item_data.description}}<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>Biblioteca</td>
+            <td>{{ jsonOject.stringify(this.item_data.library) }}</td>
+          </tr>
+          <tr>
+            <td>Ubicaci&oacute;n</td>
+            <td>{{ jsonOject.stringify(this.item_data.location) }}</td>
+          </tr>
+          <tr>
+            <td>P&aacute;ginas</td>
+            <td>{{ this.item_data.pages }}</td>
+          </tr>
+          <tr>
+            <td>Piezas</td>
+            <td>{{ this.item_data.pieces }}</td>
+          </tr>
+          <tr>
+            <td>Solicitado</td>
+            <td>{{ this.item_data.requested ? 'Sí' : 'No' }}</td>
+          </tr>
+          <tr>
+            <td>Fecha de creaci&oacute;n</td>
+            <td>{{ this.item_data.creation_date }}</td>
+          </tr>
+          <tr>
+            <td>Fecha de modificaci&oacute;n</td>
+            <td>{{ this.item_data.modification_date }}</td>
+          </tr>
+          <tr>
+            <td>Estatus de la base</td>
+            <td>{{ jsonOject.stringify(this.item_data.base_status) }}</td>
+          </tr>
+          <tr>
+            <td>Esperando a ser reestablecido</td>
+            <td>{{ this.item_data.awaiting_reshelving ? 'Sí' : 'No' }}</td>
+          </tr>
+          <tr>
+            <td>Tipo de material f&iacute;sico</td>
+            <td>{{ jsonOject.stringify(this.item_data.physical_material_type) }}</td>
+          </tr>
+          <tr>
+            <td>L&iacute;nea po</td>
+            <td>{{ this.item_data.po_line }}</td>
+          </tr>
+          <tr>
+            <td>A&ntilde;o de la publicaci&oacute;n</td>
+            <td>{{ this.item_data.year_of_issue }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n A</td>
+            <td>{{ this.item_data.enumeration_a }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n B</td>
+            <td>{{ this.item_data.enumeration_b }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n C</td>
+            <td>{{ this.item_data.enumeration_c }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n D</td>
+            <td>{{ this.item_data.enumeration_d }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n E</td>
+            <td>{{ this.item_data.enumeration_e }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n F</td>
+            <td>{{ this.item_data.enumeration_f }}</td>
+          </tr>
+          <tr>
+            <td>Enumeraci&oacute;n G</td>
+            <td>{{ this.item_data.enumeration_g }}</td>
+          </tr>
+          <tr>
+            <td>Cronolog&iacute;a I</td>
+            <td>{{ this.item_data.chronology_i }}</td>
+          </tr>
+          <tr>
+            <td>Cronolog&iacute;a J</td>
+            <td>{{ this.item_data.chronology_j }}</td>
+          </tr>
+          <tr>
+            <td>Cronolog&iacute;a K</td>
+            <td>{{ this.item_data.chronology_k }}</td>
+          </tr>
+          <tr>
+            <td>Cronolog&iacute;a L</td>
+            <td>{{ this.item_data.chronology_l }}</td>
+          </tr>break_indicator
+          <tr>
+            <td>Cronolog&iacute;a M</td>
+            <td>{{ this.item_data.chronology_m }}</td>
+          </tr>
+          <tr>
+            <td>Indicador de ruptura</td>
+            <td>{{ jsonOject.stringify(this.item_data.break_indicator) }}</td>
+          </tr>
+          <tr>
+            <td>Tipo de patr&oacute;n</td>
+            <td>{{ jsonOject.stringify(this.item_data.pattern_type) }}</td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de enlace</td>
+            <td>{{ this.item_data.linking_number }}</td>
+          </tr>
+          <tr>
+            <td>Tipo de unidad</td>
+            <td>{{ this.item_data.type_of_unit }}</td>
+          </tr>
+          <tr>
+            <td>Operador receptor</td>
+            <td>{{ this.item_data.receiving_operator }}</td>
+          </tr>
+          <tr>
+            <td>Tipo de proceso</td>
+            <td>{{ jsonOject.stringify(this.item_data.process_type) }}</td>
+          </tr>
+          <tr>
+            <td>Tipo de orden de trabajo</td>
+            <td>{{ jsonOject.stringify(this.item_data.work_order_type) }}</td>
+          </tr>
+          <tr>
+            <td>Lugar de la orden de trabajo</td>
+            <td>{{ jsonOject.stringify(this.item_data.work_order_at) }}</td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de inventario</td>
+            <td>{{ this.item_data.inventory_number }}</td>
+          </tr>
+          <tr>
+            <td>Precio de inventario</td>
+            <td>{{ this.item_data.inventory_price }}</td>
+          </tr>
+          <tr>
+            <td>N&uacute;mero de llamada alternativo</td>
+            <td>{{ this.item_data.alternative_call_number }}</td>
+          </tr>
+          <tr>
+            <td>Tipo del n&uacute;mero de llamada alternativo</td>
+            <td>{{ jsonOject.stringify(this.item_data.alternative_call_number_type) }}</td>
+          </tr>
+          <tr>
+            <td>ID de la ubicaci&oacute;n del almacenamiento</td>
+            <td>{{ this.item_data.storage_location_id }}</td>
+          </tr>
+          <tr>
+            <td>Nota p&uacute;blica</td>
+            <td>{{ this.item_data.public_note }}</td>
+          </tr>
+          <tr>
+            <td>Nota de cumplimiento</td>
+            <td>{{ this.item_data.fulfillment_note }}</td>
+          </tr>
+          <tr>
+            <td>Nota interna 1</td>
+            <td>{{ this.item_data.internal_note_1 }}</td>
+          </tr>
+          <tr>
+            <td>Nota interna 2</td>
+            <td>{{ this.item_data.internal_note_2 }}</td>
+          </tr>statistics_note_1
+          <tr>
+            <td>Nota interna 3</td>
+            <td>{{ this.item_data.internal_note_3 }}</td>
+          </tr>
+          <tr>
+            <td>Nota estadistica 1</td>
+            <td>{{ this.item_data.statistics_note_1 }}</td>
+          </tr>
+          <tr>
+            <td>Nota estadistica 2</td>
+            <td>{{ this.item_data.statistics_note_2 }}</td>
+          </tr>
+          <tr>
+            <td>Nota estadistica 3</td>
+            <td>{{ this.item_data.statistics_note_3 }}</td>
+          </tr>
+          <tr>
+            <td>Condici&oacute;n f&iacute;sica</td>
+            <td>{{ jsonOject.stringify(this.item_data.physical_condition) }}</td>
+          </tr>
+          <tr>
+            <td>Comprometido a retener</td>
+            <td>{{ jsonOject.stringify(this.item_data.committed_to_retain) }}</td>
+          </tr>
+          <tr>
+            <td>Motivo de la retenci&oacute;n</td>
+            <td>{{ jsonOject.stringify(this.item_data.retention_reason) }}</td>
+          </tr>
+          <tr>
+            <td>Nota de retensi&oacute;n</td>
+            <td>{{ this.item_data.retention_note }}</td>
+          </tr>
+        </table>
+        <br/>
+      </div>
+    </mat-tab>
+    <mat-tab label="Liga">
+      <div *ngIf="this.link != null" >
+        <h1>Liga</h1>
+        <p>{{ this.link }}</p>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
